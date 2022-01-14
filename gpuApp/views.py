@@ -5,13 +5,32 @@ from bs4 import BeautifulSoup
 import requests
 
 def index(request):
-  page = requests.get("https://tipidpc.com/catalog.php?cat=4&sec=s&page=1")
-  soup = BeautifulSoup(page.content, 'html.parser')
-  listItems = soup.select('#item-search-results > li table a')
+  basePath = "https://tipidpc.com"
+  i = 1
 
-  for item in listItems:
-    print(item.get_text())
-    print(item['href'])
+  while i < 10:
+    page = requests.get(f"https://tipidpc.com/catalog.php?cat=4&sec=s&page={i}")
+    soup = BeautifulSoup(page.content, 'html.parser')
+    listItems = soup.select('#item-search-results > li')
+
+    for item in listItems:
+      itemText = item.get_text().split('on ')
+      htmlListing = BeautifulSoup(str(item), 'html.parser')
+      title = htmlListing.select('table h2')[0]
+
+      price = float(htmlListing.select('table h3')[0].get_text().replace('P',''))
+      titleText = title.get_text()
+      listUrl = f"{basePath}/{title.find('a')['href']}"
+      print(listUrl)
+      datePosted = itemText[1]
+
+      if not (Listing.objects.filter(url=listUrl).first()):
+        listing = Listing.objects.create(
+          url = listUrl,
+          name = titleText,
+          price = price,
+        )
+    i += 1
 
   nextButton = soup.select(".pager input[value='Next']")
   return HttpResponse(nextButton)
