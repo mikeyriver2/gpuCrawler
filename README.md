@@ -32,4 +32,4 @@ Python - Django - Equivalent of https://github.com/mikeyriver2/gpuCrawler-larave
   nextButton = soup.select(".pager input[value='Next']")
   return HttpResponse(nextButton)
 ```
-Django response time for 1 page (while < 2 instead of 10) ~ 100ms (1/2 the time of laravel). Surprisingly, even with saving the db, django outperforms laravel in this aspect
+Django response time for 1 page (while < 2 instead of 10) ~ 100ms (1/2 the time of laravel). Surprisingly, even with db insertion, django outperforms laravel in this aspect
